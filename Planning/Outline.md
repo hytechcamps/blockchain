@@ -40,7 +40,7 @@ Get into the actual tech of blockchain upon which everything is built.
 Discuss some real world examples of blockchain applications that have an impact on the real world.
 
 ## Formative Assessment / Discussion
-A quiz to test knowledge retention from the lecture - also including some poll questions to spark discussions.
+A quiz to test knowledge retention from the lecture - also including some poll questions to spark discussions. Maybe use [Blooket](https://blooket.com).
 
 ## Code-Along
 An interactive activity where students can play around with Solidity in a sandbox environment.
