@@ -15,7 +15,7 @@ In addition, ask each student what they know about blockchain.
 Present the [PowerPoint Presentation](Blockchain.pptx). There are notes in the slides - make sure to keep it interactive and ask the students questions throughout. There is also one interactive activity around consensus - follow the notes in the slides to properly facilitate that activity.
 
 ## Formative Assessment - Blooket
-Facilitate the [Blooket quiz](). You must create a Blooket account in order to host the game. There is a "Crypto Hack" game that is thematically relevant to the camp material, so that is the recommended option to select when hosting.
+Facilitate the [Blooket quiz](https://dashboard.blooket.com/set/62a0fa2f78f3c51ef02f8371). You must create a Blooket account in order to host the game. There is a "Crypto Hack" game that is thematically relevant to the camp material, so that is the recommended option to select when hosting. For this camp, it may be a good idea to spend a bit more time on the formative assessment - maybe about 15 minutes.
 
 ## Follow-Along - Smart Contract
 Walk through the [follow-along activity](FollowAlong.md) as a group.
@@ -28,8 +28,8 @@ Walk through the [follow-along activity](FollowAlong.md) as a group.
 | Activity | Time |
 |-|-|
 | Icebreaker | 10m |
-| Lecture | 30m |
-| Formative Assessment | 10m |
+| Lecture | 45m |
+| Formative Assessment | 15m |
 | Break | 10m |
-| Follow-Along | 40m |
+| Follow-Along | 20m |
 | Self-Paced Work | 20m |
