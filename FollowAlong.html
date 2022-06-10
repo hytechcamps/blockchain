@@ -177,6 +177,182 @@
                                 
                                 <h1 id="follow-along---smart-contract">Follow-Along - Smart Contract</h1>
 <p>Follow the instructions below to write code for a smart contract!</p>
+<h2 id="getting-started-with-remix">Getting Started with Remix</h2>
+<p><strong>Remix</strong> is an online IDE (<strong>I</strong>ntegrated <strong>D</strong>evelopment <strong>E</strong>nvironment) for Ethereum. Basically, it&apos;s a place where you can write smart contracts, and test them out!</p>
+<h3 id="basic-rundown">Basic Rundown</h3>
+<p>Start by walking through the interactive tour of Remix.</p>
+<ol>
+<li><a href="https://remix.ethereum.org/" target="_blank">Click here to go to Remix</a></li>
+<li>Click through the opening pop-up - either option is fine<br><img src="Assets/improveremix.png" alt=""></li>
+<li>Click &quot;Next&quot; on the &quot;Welcome to Remix&quot; pop-up<br><img src="Assets/welcometoremix.png" alt=""></li>
+<li>The next pop-up shows where the compiler is - this is where code is saved and built<br><img src="Assets/soliditycompiler.png" alt=""></li>
+<li>The pop-up after that shows where the deployment is - this is where you can test out the smart contracts you&apos;ve built<br><img src="Assets/deploycontract.png" alt=""></li>
+</ol>
+<h3 id="running-code">Running Code</h3>
+<p>Now it&apos;s time to run some code!</p>
+<ol>
+<li>On the left side of the screen, click the &quot;Files&quot; menu, open the &quot;Contracts&quot; folder, and click on the <strong>1_Storage.sol</strong> file to open it<br><img src="Assets/openstoragesol.png" alt=""></li>
+<li>Take a look at the code - there is a <strong>number</strong>, a <strong>store</strong> function, and a <strong>retrieve</strong> function  <ul>
+<li>Don&apos;t worry if this doesn&apos;t make too much sense!</li>
+</ul>
+</li>
+<li>Save and build the code by opening the &quot;Compiler&quot; menu, and clicking the &quot;Compile 1_Storage.sol&quot; button<br><img src="Assets/compilebutton.png" alt=""></li>
+<li>Now, test the code by opening the &quot;Deploy&quot; menu, and clicking the &quot;Deploy&quot; button<br><img src="Assets/deploybutton.png" alt=""></li>
+<li>The contract is live! Scroll down and open it up to see how it looks<br><img src="Assets/deployedstorage.png" alt=""></li>
+<li>Enter a number, and click the &quot;store&quot; button</li>
+<li>Click the &quot;retrieve&quot; button, and verify that the stored number appears!</li>
+</ol>
+<p>This contract is quite simple, but it shows the basic flow of Remix - write code, compile it, and deploy it.</p>
+<h2 id="song-lyrics-nft---using-the-deployment">Song Lyrics NFT - Using the Deployment</h2>
+<p>Now that the basic stuff is out of the way, it&apos;s time to get into something a little more interesting.</p>
+<h3 id="deploying-the-contract">Deploying the Contract</h3>
+<p>There is some starter code for the Song Contract:</p>
+<div id="pre-remix-code" style="display: none">
+  Note: Changing the code in the JS block below will update the &quot;Click here to open new code&quot; remix link.
+</div>
+
+<pre><code class="lang-js"><span class="hljs-comment">// SPDX-License-Identifier: Unlicense</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.4</span>;
+
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;@openzeppelin/contracts/token/ERC721/ERC721.sol&quot;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;@openzeppelin/contracts/access/Ownable.sol&quot;</span>;
+
+<span class="hljs-comment">// Data about each song</span>
+struct Song {
+    string name;
+    string lyrics;
+}
+
+<span class="hljs-comment">// Contract</span>
+contract SongsContract is ERC721, Ownable {
+    <span class="hljs-comment">// What does it cost to create a new NFT?</span>
+    uint256 public mintPrice;
+
+    <span class="hljs-comment">// Keep track of an ID for each token</span>
+    uint256 currentTokenId = <span class="hljs-number">0</span>;
+
+    <span class="hljs-comment">// Check if minting is currently allowed</span>
+    bool public isMintEnabled = <span class="hljs-literal">false</span>;
+
+    <span class="hljs-comment">// Our list of songs stored as NFTs</span>
+    Song[] public songs;
+
+    <span class="hljs-comment">// Mapping song IDs to owners - see who owns a given song</span>
+    mapping(uint256 =&gt; address) public songOwners;
+
+    <span class="hljs-comment">// Mapping owners to song count - see how many songs someone owns</span>
+    mapping(address =&gt; uint256) public ownerSongCount;
+
+    <span class="hljs-comment">// Set the name and symbol of the token</span>
+    <span class="hljs-keyword">constructor</span>() payable ERC721(&quot;SongMint&quot;, &quot;SNG&quot;) {
+        <span class="hljs-comment">// Set the price</span>
+        mintPrice = <span class="hljs-number">50000</span> wei;
+    }
+
+    <span class="hljs-comment">// Function to enable and disable minting</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">toggleIsMintEnabled</span>(<span class="hljs-params"></span>) <span class="hljs-title">external</span> <span class="hljs-title">onlyOwner</span> </span>{
+        isMintEnabled = !isMintEnabled;
+    }
+
+    <span class="hljs-comment">// Function to get the lyrics for a given song name</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getLyricsForSong</span>(<span class="hljs-params">string calldata songName</span>) <span class="hljs-title">external</span> <span class="hljs-title">view</span> <span class="hljs-title">returns</span>(<span class="hljs-params">string memory lyrics</span>) </span>{
+        <span class="hljs-comment">// Loop through each song in the list</span>
+        <span class="hljs-keyword">for</span> (uint256 i = <span class="hljs-number">0</span>; i &lt; songs.length; i++) {
+            <span class="hljs-comment">// If we found the song we are looking for...</span>
+            <span class="hljs-keyword">if</span> (keccak256(abi.encodePacked(songs[i].name)) == keccak256(abi.encodePacked(songName))) {
+                <span class="hljs-comment">// Return the lyrics for the song!</span>
+                <span class="hljs-keyword">return</span> songs[i].lyrics;
+            }
+        }
+
+        <span class="hljs-comment">// We couldn&apos;t find a song with that name :(</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;No song found&quot;</span>;
+    }
+
+    <span class="hljs-comment">// Find all the songs owned by a given address</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getSongsByOwner</span>(<span class="hljs-params">address owner</span>) <span class="hljs-title">public</span> <span class="hljs-title">view</span> <span class="hljs-title">returns</span>(<span class="hljs-params">uint256[] memory</span>) </span>{
+        <span class="hljs-comment">// Create a new list</span>
+        uint256[] memory result = <span class="hljs-keyword">new</span> uint256[](ownerSongCount[owner]);
+
+        <span class="hljs-comment">// Setup a counter to keep track of how many songs we have</span>
+        uint256 counter = <span class="hljs-number">0</span>;
+
+        <span class="hljs-comment">// Loop through each song</span>
+        <span class="hljs-keyword">for</span> (uint256 i = <span class="hljs-number">0</span>; i &lt; songs.length; i++) {
+            <span class="hljs-comment">// If the owner owns this song...</span>
+            <span class="hljs-keyword">if</span> (songOwners[i] == owner) {
+                <span class="hljs-comment">// Add the song ID to the list</span>
+                result[counter] = i;
+
+                <span class="hljs-comment">// Make the counter go up by one</span>
+                counter++;
+            }
+        }
+
+        <span class="hljs-comment">// Return the list</span>
+        <span class="hljs-keyword">return</span> result;
+    }
+
+    <span class="hljs-comment">// Create the NFT based on the song name and song lyrics</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mint</span>(<span class="hljs-params">string calldata songName, string calldata songLyrics</span>) <span class="hljs-title">external</span> <span class="hljs-title">payable</span> </span>{
+        <span class="hljs-comment">// Check if minting is enabled</span>
+        <span class="hljs-built_in">require</span>(isMintEnabled, <span class="hljs-string">&quot;minting not enabled&quot;</span>);
+
+        <span class="hljs-comment">// Check if the caller provided the proper amount of currency</span>
+        <span class="hljs-built_in">require</span>(msg.value == mintPrice, <span class="hljs-string">&quot;wrong value&quot;</span>);
+
+        <span class="hljs-comment">// Make sure a song with this name does not already exist</span>
+        <span class="hljs-built_in">require</span>(!songNameExists(songName), <span class="hljs-string">&quot;song with that name already exists&quot;</span>);
+
+        <span class="hljs-comment">// Make sure a song with these lyrics does not already exist</span>
+        <span class="hljs-built_in">require</span>(!songLyricsExists(songLyrics), <span class="hljs-string">&quot;song with those lyrics already exists&quot;</span>);
+
+        <span class="hljs-comment">// Make a new song with the name and lyrics, and add it to our list</span>
+        Song memory newSong = Song(songName, songLyrics);
+        songs.push(newSong);
+
+        <span class="hljs-comment">// Set the owner of the new song to be the caller</span>
+        songOwners[currentTokenId] = msg.sender;
+        ownerSongCount[msg.sender]++;
+
+        <span class="hljs-comment">// Mint the NFT!</span>
+        _safeMint(msg.sender, currentTokenId);
+
+        <span class="hljs-comment">// Update our current token ID for next time</span>
+        currentTokenId++;
+    }
+
+    <span class="hljs-comment">// Helper function - check if a song with the given name already exists</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">songNameExists</span>(<span class="hljs-params">string calldata songName</span>) <span class="hljs-title">private</span> <span class="hljs-title">view</span> <span class="hljs-title">returns</span>(<span class="hljs-params">bool exists</span>) </span>{
+        <span class="hljs-keyword">for</span> (uint256 i = <span class="hljs-number">0</span>; i &lt; songs.length; i++) {
+            <span class="hljs-keyword">if</span> (keccak256(abi.encodePacked(songs[i].name)) == keccak256(abi.encodePacked(songName))) {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            }
+        }
+
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+
+    <span class="hljs-comment">// Just a little test</span>
+
+    <span class="hljs-comment">// Helper function - check if a song with the given lyrics already exists</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">songLyricsExists</span>(<span class="hljs-params">string calldata songLyrics</span>) <span class="hljs-title">private</span> <span class="hljs-title">view</span> <span class="hljs-title">returns</span>(<span class="hljs-params">bool exists</span>) </span>{
+        <span class="hljs-keyword">for</span> (uint256 i = <span class="hljs-number">0</span>; i &lt; songs.length; i++) {
+            <span class="hljs-keyword">if</span> (keccak256(abi.encodePacked(songs[i].lyrics)) == keccak256(abi.encodePacked(songLyrics))) {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            }
+        }
+
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+}
+</code></pre>
+<ol>
+<li><a id="remix-url" target="_blank">Click here to open the new code</a></li>
+</ol>
+<h2 id="song-lyrics-nft---updating-the-code">Song Lyrics NFT - Updating the Code</h2>
+<h3 id="adding-an-artist">Adding an Artist</h3>
+<h3 id=""> </h3>
 
                                 
                                 </section>
@@ -220,7 +396,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Follow-Along Activity","level":"1.2","depth":1,"next":{"title":"Self-Paced Work","level":"1.3","depth":1,"path":"SelfPacedWork.md","ref":"SelfPacedWork.md","articles":[]},"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"StudentDesc.md","ref":"StudentDesc.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"StudentDesc.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"FollowAlong.md","mtime":"2022-06-09T13:40:12.866Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-06-09T13:40:41.098Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Follow-Along Activity","level":"1.2","depth":1,"next":{"title":"Self-Paced Work","level":"1.3","depth":1,"path":"SelfPacedWork.md","ref":"SelfPacedWork.md","articles":[]},"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"StudentDesc.md","ref":"StudentDesc.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["scripts"],"pluginsConfig":{"scripts":{"files":["./getRemixUrl.js"]},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"StudentDesc.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"FollowAlong.md","mtime":"2022-06-10T12:41:12.546Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-06-10T12:41:57.105Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
@@ -228,6 +404,10 @@
         
     <script src="gitbook/gitbook.js"></script>
     <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-scripts/04bf4477fb6757d1a7a8617b11abfbe6-getRemixUrl.js"></script>
+        
     
         
         <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>

@@ -1,5 +1,13 @@
 {
     "structure": {
         "readme": "StudentDesc.md"
+    },
+    "plugins": ["scripts"],
+    "pluginsConfig": {
+        "scripts": {
+            "files": [
+                "./getRemixUrl.js"
+            ]
+        }
     }
 }
