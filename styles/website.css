@@ -1,3 +1,7 @@
 h2 {
     border-bottom: 1px solid #ddd;
 }
+
+#pre-remix-code + pre {
+    display: none;
+}
