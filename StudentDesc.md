@@ -29,10 +29,11 @@ Dig deeper into the technical details of blockchain.
 
 - [But how does bitcoin actually work?](https://www.youtube.com/watch?v=bBC-nXj3Ng4)
 - [CryptoZombies - Learn to Code Blockchain DApps](https://cryptozombies.io/)
-- [A Blockchain Glossary for Beginners](https://consensys.net/knowledge-base/a-blockchain-glossary-for-beginners/)
 - [Blockchain 101 - A Visual Demo](https://andersbrownworth.com/blockchain/)
 - [Block Explorer - first bitcoin block](https://www.blockchain.com/btc/block/1)
 - [Block Explorer - most recent bitcoin blocks](https://www.blockchain.com/btc/blocks?page=1)
+- [A Blockchain Glossary for Beginners](https://consensys.net/knowledge-base/a-blockchain-glossary-for-beginners/)
+- [How to Write a Basic NFT Contract from Scratch | Solidity, Remix](https://www.youtube.com/watch?v=8WPzUbJyoNg)
 - [Implementing a blockchain from scratch: why, how, and what we learned](https://jis-eurasipjournals.springeropen.com/articles/10.1186/s13635-019-0085-3)
 - [Can you get rich mining bitcoin as an individual?](https://bitcoin.stackexchange.com/questions/16687/solo-mining-just-for-luck-realistic)
 - [Nonce size - Will it always be big enough?](https://bitcoin.stackexchange.com/questions/1781/nonce-size-will-it-always-be-big-enough)
