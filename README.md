@@ -18,10 +18,12 @@ Present the [PowerPoint Presentation](Blockchain.pptx). There are notes in the s
 Facilitate the [Blooket quiz](https://dashboard.blooket.com/set/62a0fa2f78f3c51ef02f8371). You must create a Blooket account in order to host the game. There is a "Crypto Hack" game that is thematically relevant to the camp material, so that is the recommended option to select when hosting. For this camp, it may be a good idea to spend a bit more time on the formative assessment - maybe about 15 minutes.
 
 ## Follow-Along - Smart Contract
-Walk through the [follow-along activity](FollowAlong.md) as a group.
+Walk through the [follow-along activity](FollowAlong.md) as a group. **Make sure to emphasize that the students do not need to understand the code;** it's more about the deployed contract. There are some code updates to make, but it is not worth taking the time to explain the technical programming details.
 
 ## Self-Paced Work - Further Exploration
+If there is any time remaining for self-paced work, have the students follow the [self-paced work instructions](SelfPacedWork.md). Instruct them to go to [CryptoZombies](https://cryptozomies.io) and work through the interactive Solidity tutorial. It's quite advanced, so there is no expectation that they will understand it - but if they skip through, they can see some of the resulting app features from the code.
 
+Alternatively, if there is interest, play Blooket again for the remainder of the time before giving the students the survey.
 
 ## Schedule
 
@@ -31,5 +33,5 @@ Walk through the [follow-along activity](FollowAlong.md) as a group.
 | Lecture | 45m |
 | Formative Assessment | 15m |
 | Break | 10m |
-| Follow-Along | 20m |
-| Self-Paced Work | 20m |
+| Follow-Along | 30m |
+| Self-Paced Work | 10m |

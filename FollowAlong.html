@@ -205,10 +205,11 @@
 <p>This contract is quite simple, but it shows the basic flow of Remix - write code, compile it, and deploy it.</p>
 <h2 id="song-lyrics-nft---using-the-deployment">Song Lyrics NFT - Using the Deployment</h2>
 <p>Now that the basic stuff is out of the way, it&apos;s time to get into something a little more interesting.</p>
-<h3 id="deploying-the-contract">Deploying the Contract</h3>
-<p>There is some starter code for the Song Contract:</p>
+<h3 id="deploying-the-songs-contract">Deploying the Songs Contract</h3>
+<p>There is an existing smart contract that contains NFTs for songs. Don&apos;t worry too much about the code - it&apos;s okay if none of it makes sense! Start by exploring the deployed application.</p>
 <div id="pre-remix-code" style="display: none">
   Note: Changing the code in the JS block below will update the &quot;Click here to open new code&quot; remix link.
+  Also, the code is actually Solidity and not JS, but the syntax highlighting is pretty much the same.
 </div>
 
 <pre><code class="lang-js"><span class="hljs-comment">// SPDX-License-Identifier: Unlicense</span>
@@ -333,8 +334,6 @@ contract SongsContract is ERC721, Ownable {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
     }
 
-    <span class="hljs-comment">// Just a little test</span>
-
     <span class="hljs-comment">// Helper function - check if a song with the given lyrics already exists</span>
     <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">songLyricsExists</span>(<span class="hljs-params">string calldata songLyrics</span>) <span class="hljs-title">private</span> <span class="hljs-title">view</span> <span class="hljs-title">returns</span>(<span class="hljs-params">bool exists</span>) </span>{
         <span class="hljs-keyword">for</span> (uint256 i = <span class="hljs-number">0</span>; i &lt; songs.length; i++) {
@@ -348,11 +347,163 @@ contract SongsContract is ERC721, Ownable {
 }
 </code></pre>
 <ol>
-<li><a id="remix-url" target="_blank">Click here to open the new code</a></li>
+<li><a id="remix-url" target="_blank">Click here to open the new code in Remix</a></li>
+<li>Select the &quot;Compile&quot; menu on the left, and click the &quot;Compile&quot; button</li>
+<li>Go to the &quot;Deploy&quot; menu on the left</li>
+<li>In the dropdown under &quot;CONTRACT&quot;, select &quot;SongsContract&quot;<br><img src="Assets/selectsongscontract.png" alt=""></li>
+<li>Click the red &quot;Deploy&quot; button</li>
+<li>Under that, Find the &quot;Deployed Contracts&quot; section, and expand SONGSCONTRACT<br><img src="Assets/expanddeployedcontracts.png" alt=""></li>
 </ol>
+<p>All of the buttons and inputs that appear below constitute the user interface for the Songs contract!</p>
+<h3 id="testing-the-contract---minting">Testing the Contract - Minting</h3>
+<p>Now it&apos;s time to test out the contract and mint some NFTs!</p>
+<ol>
+<li>Expand the red &quot;mint&quot; function section<br><img src="Assets/mintbutton.png" alt=""></li>
+<li>Enter a song title and the first line of a song (not the whole lyrics)</li>
+<li>Click the red &quot;transact&quot; button<br><img src="Assets/minttransact.png" alt=""></li>
+</ol>
+<p>Uh-oh! Looks like something went wrong. Take a look in the console below the code section - there should be a message like this:</p>
+<pre><code>revert
+    The transaction has been reverted to the initial state.
+Reason provided by the contract: &quot;minting not enabled&quot;.
+Debug the transaction to get more information.
+</code></pre><p>The important piece is the &quot;minting not enabled&quot; message. The contract needs minting to be enabled first! <strong>Find and click the orange &quot;toggleIsMintEnabled&quot; button to enable minting</strong>. It may only say &quot;toggleIsMintE...&quot; because the button does not have space for the full function name:</p>
+<p><img src="Assets/togglemintise.png" alt=""></p>
+<p>Once minting has been enabled, go back up to the &quot;mint&quot; function section, and try clicking the red &quot;transact&quot; button again...</p>
+<p>Oh no, there&apos;s still an issue! The good news is, this issue is a different one. Check the console to see why the transaction failed:</p>
+<pre><code>revert
+    The transaction has been reverted to the initial state.
+Reason provided by the contract: &quot;wrong value&quot;.
+Debug the transaction to get more information.
+</code></pre><p>This time, &quot;wrong value&quot; is the reason the transaction failed. This is an important lesson! In Ethereum, transactions like minting NFTs are associated with some form of payment. Make sure that the value provided is equal to the price.</p>
+<ol>
+<li>In the deployed contract, scroll down and click the blue &quot;mintPrice&quot; button<br><img src="Assets/mintprice.png" alt=""></li>
+<li>Check the number that appears below the button - it should say <code>0: uint256: 50000</code><ul>
+<li>The important part there is the <strong>50000</strong>!</li>
+</ul>
+</li>
+<li>Scroll back up to the top of the &quot;Deploy&quot; section, and find the &quot;VALUE&quot; field<ul>
+<li>Note that this is in <a href="https://www.investopedia.com/terms/w/wei.asp" target="_blank"><em>Wei</em></a> - basically, a very very small amount of ether</li>
+<li>Don&apos;t worry, this is a test network - it won&apos;t cost any real money!</li>
+</ul>
+</li>
+<li>Enter <strong>50000</strong> for the value<br><img src="Assets/50000wei.png" alt=""></li>
+<li>Go back down and click the red &quot;transact&quot; button in the &quot;mint&quot; section again - this time it should work!</li>
+</ol>
+<p>You have successfully minted a new Song NFT! Take a minute to mint a few more songs, keeping a few things in mind:</p>
+<ul>
+<li>Always make sure to set the value to <strong>50000 wei</strong></li>
+<li>Trying to mint a song that already exists will cause an error</li>
+<li>Feel free to make up your own songs and lyrics, or copy and paste full lyrics!</li>
+</ul>
+<h3 id="testing-the-contract---viewing">Testing the Contract - Viewing</h3>
+<p>Now that the blockchain has stored some new songs, it&apos;s possible to view them. When minted, each song is automatically given an ID number, starting at <strong>0</strong>. This will be the main way to access each song.</p>
+<h4 id="songs-by-id">Songs by ID</h4>
+<ol>
+<li>Scroll down to the blue &quot;songs&quot; button</li>
+<li>Enter <strong>0</strong> into the field (this is the song id)</li>
+<li>Click the button to see the first minted song!<br><img src="Assets/firstmintedsong.png" alt=""></li>
+<li>Try entering <strong>1</strong>, <strong>2</strong>, etc to see other songs that have been minted</li>
+</ol>
+<h4 id="song-owners">Song Owners</h4>
+<ol>
+<li>Scroll up to the blue &quot;ownerOf&quot; button</li>
+<li>Enter a song id (like <strong>0</strong>)</li>
+<li>Click the button to see which address owns the first minted song!<br><img src="Assets/ownerof.png" alt=""></li>
+</ol>
+<h4 id="song-lyrics-from-name">Song Lyrics from Name</h4>
+<ol>
+<li>Scroll up to the blue &quot;getLyricsForSong&quot; button (it may say &quot;getLyricsForSo...&quot;)</li>
+<li>Enter a song name for a minted song - make sure the capitalization is correct</li>
+<li>Click the button to see the lyrics!<br><img src="Assets/getlyricsforsong.png" alt=""></li>
+</ol>
+<h4 id="optional---more-functions">Optional - More Functions</h4>
+<p>There are several additional functions to explore as well! To test transactions between addresses, it will be necessary to change the account/address calling the functions. This is possible at the top of the &quot;Deploy&quot; section:</p>
+<p><img src="Assets/changeaccount.png" alt=""></p>
+<p>Here are some of the other possibilities:</p>
+<ul>
+<li>Blue &quot;getSongsByOwner&quot; button - see which songs are owned by a given address</li>
+<li>Blue &quot;balanceOf&quot; button - see how many tokens are owned by a given address</li>
+<li>Orange &quot;transferFrom&quot; button - transfer an owned token from one address to another</li>
+</ul>
 <h2 id="song-lyrics-nft---updating-the-code">Song Lyrics NFT - Updating the Code</h2>
-<h3 id="adding-an-artist">Adding an Artist</h3>
-<h3 id=""> </h3>
+<p>Let&apos;s dig into the code a little bit and make some updates. It is not necessary to fully understand the code in the <strong>.sol</strong> file - just follow along with the updates and watch how they change the functionality of the deployment!</p>
+<h3 id="adding-an-artist-field">Adding an Artist Field</h3>
+<p>In most music databases, each song will typically be associated with an artist! We can add that capability to our NFT as well.</p>
+<ol>
+<li>At the top of the code file (on line <strong>8</strong>), find <code>struct Song</code><ul>
+<li>Notice there are two things listed under that - <code>string name;</code> and <code>string lyrics;</code></li>
+</ul>
+</li>
+<li>Following that pattern, add a field for artist</li>
+</ol>
+<p>The code at the top should look something like this:</p>
+<pre><code class="lang-cs"><span class="hljs-comment">// Data about each song</span>
+<span class="hljs-keyword">struct</span> Song {
+    <span class="hljs-keyword">string</span> name;
+    <span class="hljs-keyword">string</span> lyrics;
+    <span class="hljs-keyword">string</span> artist;
+}
+</code></pre>
+<p>This will actually cause an issue in the compiler - select the &quot;Compiler&quot; section from the left menu, and see that the error appears to be on line <strong>99</strong>. This is where the new song is created - but it currently doesn&apos;t have an artist! There are a couple of things that need to be fixed.</p>
+<ol>
+<li>On line <strong>99</strong>, add <code>songArtist</code> at the end of the list within <code>Song()</code>:  <pre><code class="lang-java">Song memory newSong = Song(songName, songLyrics, songArtist);
+</code></pre>
+</li>
+<li>Notice that this causes another error - <code>songArtist</code> needs to be passed in as an input</li>
+<li>On line <strong>85</strong>, see how the other input fields for <code>songName</code> and <code>songLyrics</code> are created</li>
+<li>Add another input field in the same way, for <code>string calldata songArtist</code>:  <pre><code class="lang-cs"><span class="hljs-function">function <span class="hljs-title">mint</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> calldata songName, <span class="hljs-keyword">string</span> calldata songLyrics, <span class="hljs-keyword">string</span> calldata songArtist</span>) external payable </span>{
+</code></pre>
+</li>
+</ol>
+<p>Now the code should work! Test it out by following these steps:</p>
+<ol>
+<li>Click the &quot;Compile&quot; button</li>
+<li>Select the &quot;Deploy&quot; section from the left menu</li>
+<li>Down in the &quot;Deployed Contracts&quot; area, click the trash can to delete the existing contract<br><img src="Assets/deletedeployedcontracts.png" alt=""></li>
+<li>Click the red &quot;Deploy&quot; button</li>
+<li>Expand the newly deployed contract</li>
+<li>Click the orange &quot;toggleIsMintEnabled&quot; button</li>
+<li>Expand the &quot;mint&quot; section</li>
+<li>Enter information for a new song (including artist this time!)</li>
+<li>Set the VALUE to <strong>50000</strong></li>
+<li>Click the red &quot;transact&quot; button<br><img src="Assets/mintwithartist.png" alt=""></li>
+</ol>
+<p>It should now be possible to explore the songs on the blockchain with artists!</p>
+<p><img src="Assets/songswithartist.png" alt=""></p>
+<p>Changing only a few lines of code had a pretty big impact on the deployed contract!</p>
+<h3 id="adding-more-requirements">Adding More Requirements</h3>
+<p>In the current version of the application, it is actually possible to enter <em>nothing</em> for the song name, lyrics, and artist. Let&apos;s add some code to fix that!</p>
+<ol>
+<li>In the code, within the <code>mint</code> function, find the <code>require(!songLyricsExists(songLyrics), &quot;song with those lyrics already exists&quot;);</code> line (should be around line <strong>96</strong>)</li>
+<li>Make some new lines under that - this is where the new <code>require</code>ments will go</li>
+<li>Add the following code to force the length of the song name to be greater than 0:  <pre><code class="lang-js"><span class="hljs-built_in">require</span>(bytes(songName).length &gt; <span class="hljs-number">0</span>, <span class="hljs-string">&quot;song name must not be empty&quot;</span>);
+</code></pre>
+</li>
+<li>Add another new line, and do the same thing - but this time, with <code>songLyrics</code><ul>
+<li>Change the message so that it reflects the new requirement</li>
+</ul>
+</li>
+<li>Add yet another line, and do the same thing again - but with <code>songArtist</code><ul>
+<li>Change the message so that it reflects the new requirement</li>
+</ul>
+</li>
+<li>Under that, add a very similar line of code to make sure the song name is not too <em>long</em>:  <pre><code class="lang-js"><span class="hljs-built_in">require</span>(bytes(songName).length &lt; <span class="hljs-number">40</span>, <span class="hljs-string">&quot;song name too long&quot;</span>);
+</code></pre>
+</li>
+<li>Do the same thing for <code>songLyrics</code> and <code>songArtist</code> - feel free to choose custom length maximums and messages!</li>
+</ol>
+<p>The code for these requirements should end up looking something like this:</p>
+<pre><code class="lang-js"><span class="hljs-built_in">require</span>(bytes(songName).length &gt; <span class="hljs-number">0</span>, <span class="hljs-string">&quot;song name must not be empty&quot;</span>);
+<span class="hljs-built_in">require</span>(bytes(songLyrics).length &gt; <span class="hljs-number">0</span>, <span class="hljs-string">&quot;song lyrics must not be empty&quot;</span>);
+<span class="hljs-built_in">require</span>(bytes(songArtist).length &gt; <span class="hljs-number">0</span>, <span class="hljs-string">&quot;song artist must not be empty&quot;</span>);
+<span class="hljs-built_in">require</span>(bytes(songName).length &lt; <span class="hljs-number">40</span>, <span class="hljs-string">&quot;song name too long&quot;</span>);
+<span class="hljs-built_in">require</span>(bytes(songLyrics).length &lt; <span class="hljs-number">500</span>, <span class="hljs-string">&quot;song lyrics too long&quot;</span>);
+<span class="hljs-built_in">require</span>(bytes(songArtist).length &lt; <span class="hljs-number">40</span>, <span class="hljs-string">&quot;song artist too long&quot;</span>);
+</code></pre>
+<p>With just a few more lines of code, the contract is much more robust.</p>
+<h2 id="next-steps">Next Steps</h2>
+<p>After the follow-along activity, be sure to check out the <a href="SelfPacedWork.html">self-paced work</a> to continue practicing and learning!</p>
 
                                 
                                 </section>
@@ -396,7 +547,7 @@ contract SongsContract is ERC721, Ownable {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Follow-Along Activity","level":"1.2","depth":1,"next":{"title":"Self-Paced Work","level":"1.3","depth":1,"path":"SelfPacedWork.md","ref":"SelfPacedWork.md","articles":[]},"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"StudentDesc.md","ref":"StudentDesc.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["scripts"],"pluginsConfig":{"scripts":{"files":["./getRemixUrl.js"]},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"StudentDesc.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"FollowAlong.md","mtime":"2022-06-10T12:41:12.546Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-06-10T12:41:57.105Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Follow-Along Activity","level":"1.2","depth":1,"next":{"title":"Self-Paced Work","level":"1.3","depth":1,"path":"SelfPacedWork.md","ref":"SelfPacedWork.md","articles":[]},"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"StudentDesc.md","ref":"StudentDesc.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["scripts"],"pluginsConfig":{"scripts":{"files":["./getRemixUrl.js"]},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"StudentDesc.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"FollowAlong.md","mtime":"2022-06-10T15:55:27.850Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-06-10T15:56:08.520Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
