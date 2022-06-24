@@ -332,7 +332,7 @@ It should now be possible to explore the songs on the blockchain with artists!
 
 Changing only a few lines of code had a pretty big impact on the deployed contract!
 
-### Adding More Requirements
+### Optional - Adding More Requirements
 In the current version of the application, it is actually possible to enter _nothing_ for the song name, lyrics, and artist. Let's add some code to fix that!
 
 1. In the code, within the `mint` function, find the `require(!songLyricsExists(songLyrics), "song with those lyrics already exists");` line (should be around line **96**)
